@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -19,13 +16,28 @@ import javax.persistence.Table;
 public class User {
     @Id
     @GeneratedValue
+    //@Column(nullable = false, updatable = false)
     private Integer id;
+
+    //@Column(nullable = false)
     private String firstName;
+
+    //@Column(nullable = false)
     private String lastName;
+
+    //@Column(nullable = false, unique = true)
     private String username;
+
+    //@Column(nullable = false)
     private String passwordHash;
+
+    //@Column(nullable = false, unique = true)
     private String email;
+
     private String phoneNumber;
     private String shippingAddress;
-    private Integer roleId;
+
+    @ManyToOne
+    @JoinColumn(name = "roleId")
+    private Role role;
 }
