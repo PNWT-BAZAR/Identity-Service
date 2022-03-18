@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-@Entity
-@Table(name="Permission")
 public class Permission {
     private Integer id;
     private String name;
