@@ -40,4 +40,18 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "roleId")
     private Role role;
+
+    public User(String firstName, String lastName, String username, String passwordHash, String email, String phoneNumber, String shippingAddress, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.shippingAddress = shippingAddress;
+        this.role = role;
+    }
+
+    public User() {
+    }
 }
