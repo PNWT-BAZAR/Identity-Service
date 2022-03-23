@@ -1,40 +1,58 @@
 package com.unsa.etf.Identity.Service.Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table
 public class User {
     @Id
-    @GeneratedValue
-    //@Column(nullable = false, updatable = false)
-    private Integer id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(columnDefinition = "CHAR(32)")
+    private String id;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
+    @NotBlank
+    @Size(max = 10)
     private String firstName;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
+    @NotBlank
+    @Size(max = 20)
     private String lastName;
 
-    //@Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
+    @NotBlank
+    @Size(min = 8, max = 15)
     private String username;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
+    @NotBlank
     private String passwordHash;
 
-    //@Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
+    @Email
+    @NotBlank
     private String email;
 
+    @Column(nullable = false)
+    @NotBlank
+    @Size(min = 9, max = 12)
     private String phoneNumber;
+
+    @Column(nullable = false)
+    @NotBlank
     private String shippingAddress;
 
     @ManyToOne
@@ -50,8 +68,5 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.shippingAddress = shippingAddress;
         this.role = role;
-    }
-
-    public User() {
     }
 }

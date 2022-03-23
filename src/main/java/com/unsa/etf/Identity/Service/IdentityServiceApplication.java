@@ -56,7 +56,7 @@ public class IdentityServiceApplication {
 			User kemal = new User(
 						"Kemal",
 						"Lazovic",
-						"klazovic",
+						"klazovic1",
 						"jdoa9920",
 						"klazovic1@etf.unsa.ba",
 						"061333444",
@@ -66,7 +66,7 @@ public class IdentityServiceApplication {
 			User taida = new User(
 						"Taida",
 						"Kadric",
-						"tkadric",
+						"tkadric28",
 						"da09dasp",
 						"tkadric1@etf.unsa.ba",
 						"061555666",
