@@ -34,6 +34,8 @@ public class IdentityValidator {
                 return "The parameter " + violation.getPropertyPath() + " must me greater than 0";
             } else if (violation.getMessageTemplate().equals("{javax.validation.constraints.Email.message}")){
                 return "The parameter " + violation.getPropertyPath() + " is incorrect";
+            }else if (violation.getMessageTemplate().equals("{javax.validation.constraints.Pattern.message}")){
+                return "The parameter " + violation.getPropertyPath() + " is incorrect";
             }
         }
 

@@ -12,10 +12,11 @@ import java.util.Optional;
 public class RoleService {
 
     private final RoleRepository roleRepository;
-
+    private final UserService userService;
     @Autowired
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository, UserService userService) {
         this.roleRepository = roleRepository;
+        this.userService = userService;
     }
 
     public List<Role> getRoles() {
@@ -33,20 +34,29 @@ public class RoleService {
 
     public boolean deleteRole(String roleId) {
         if (roleRepository.existsById(roleId)) {
+            Role role = roleRepository.getById(roleId);
+
+            userService.setUserRoleToNull(role);
+
             roleRepository.deleteById(roleId);
             return true;
         }
         return false;
     }
 
+    public void deleteAll() {
+        userService.setAllRolesToNull();
+        roleRepository.deleteAll();
+    }
+
     public Role updateRole(Role role) {
-        if (roleRepository.existsById(role.getId())) {
-            return roleRepository.save(role);
+        return roleRepository.save(role);
+    }
+
+    public Role getRoleById(String roleId) {
+        if(roleRepository.existsById(roleId)) {
+            return roleRepository.findById(roleId).get();
         }
         return null;
     }
-
-//    public void deleteAllRoles() {
-//        roleRepository.deleteAll();
-//    }
 }

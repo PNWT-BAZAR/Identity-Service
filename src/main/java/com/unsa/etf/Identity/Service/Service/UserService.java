@@ -1,5 +1,6 @@
 package com.unsa.etf.Identity.Service.Service;
 
+import com.unsa.etf.Identity.Service.Model.Role;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +43,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        if (userRepository.existsById(user.getId())) {
-            return userRepository.save(user);
-        }
-        return null;
+        return userRepository.save(user);
     }
 
     public User addNewUser(User user) {
@@ -55,5 +53,23 @@ public class UserService {
         }
         userRepository.save(user);
         return user;
+    }
+
+    public void setUserRoleToNull(Role role) {
+        List<User> users = userRepository.findUsersByRole(role);
+        if (!users.isEmpty()) {
+            for (User user : users) {
+                user.setRole(null);
+            }
+            userRepository.saveAll(users);
+        }
+    }
+
+    public void setAllRolesToNull() {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            user.setRole(null);
+        }
+        userRepository.saveAll(users);
     }
 }

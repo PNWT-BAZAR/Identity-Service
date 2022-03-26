@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -67,9 +66,6 @@ public class UserController {
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         if (identityValidator.isValid(user)) {
             User updatedUser = userService.updateUser(user);
-            if (updatedUser == null) {
-                return ResponseEntity.status(409).body("User Does Not Exist!");
-            }
             return ResponseEntity.status(200).body(updatedUser);
         }
         return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(user));

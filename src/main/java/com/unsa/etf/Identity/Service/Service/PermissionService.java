@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class PermissionService {
@@ -33,18 +32,12 @@ public class PermissionService {
 
     public Permission addNewPermission(Permission permission) {
         Optional<Permission> permissionOptional = permissionRepository.findPermissionByName(permission.getName());
-        if(permissionOptional.isPresent()){
-            return null;
-        }
         permissionRepository.save(permission);
         return permission;
     }
 
     public Permission updatePermission(Permission permission) {
-        if (permissionRepository.existsById(permission.getId())) {
-            return permissionRepository.save(permission);
-        }
-        return null;
+        return permissionRepository.save(permission);
     }
 
     public boolean deletePermission(String permissionId) {
@@ -53,5 +46,9 @@ public class PermissionService {
             return true;
         }
         return false;
+    }
+
+    public void deleteAll() {
+        permissionRepository.deleteAll();
     }
 }

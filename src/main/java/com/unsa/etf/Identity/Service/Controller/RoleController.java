@@ -4,11 +4,9 @@ import com.unsa.etf.Identity.Service.Model.Role;
 import com.unsa.etf.Identity.Service.Service.RoleService;
 import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,6 +25,15 @@ public class RoleController {
     @GetMapping
     public List<Role> getRoles() {
         return roleService.getRoles();
+    }
+
+    @GetMapping("/{roleId}")
+    public ResponseEntity<?> getRoleById(@PathVariable("roleId") String roleId) {
+        Role role = roleService.getRoleById(roleId);
+        if (role == null) {
+            return ResponseEntity.status(409).body("Role Does Not Exist!");
+        }
+        return ResponseEntity.status(200).body(role);
     }
 
     @PostMapping
@@ -49,19 +56,16 @@ public class RoleController {
         return ResponseEntity.status(409).body("Role Does Not Exist!");
     }
 
-//    @DeleteMapping("role/deleteAll")
-//    public ResponseEntity<?> deleteAllRoles() {
-//        roleService.deleteAllRoles();
-//        return ResponseEntity.status(200).body("Roles Successfully Deleted!");
-//    }
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll() {
+        roleService.deleteAll();
+        return ResponseEntity.status(200).body("Roles Successfully Deleted!");
+    }
 
     @PutMapping
     public ResponseEntity<?> updateRole(@RequestBody Role role) {
         if (identityValidator.isValid(role)) {
             Role updatedRole = roleService.updateRole(role);
-            if (updatedRole == null) {
-                return ResponseEntity.status(409).body("Role Does Not Exist!");
-            }
             return ResponseEntity.status(200).body(updatedRole);
         }
         return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(role));

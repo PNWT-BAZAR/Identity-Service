@@ -2,10 +2,13 @@ package com.unsa.etf.Identity.Service.Model;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -47,8 +50,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    @NotBlank
-    @Size(min = 9, max = 12)
+    @Pattern(regexp = "[+]?\\d{9,15}")
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -57,6 +59,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "roleId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Role role;
 
     public User(String firstName, String lastName, String username, String passwordHash, String email, String phoneNumber, String shippingAddress, Role role) {

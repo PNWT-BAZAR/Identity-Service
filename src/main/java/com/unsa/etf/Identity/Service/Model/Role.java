@@ -1,8 +1,9 @@
 package com.unsa.etf.Identity.Service.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -33,10 +34,8 @@ public class Role {
             joinColumns = @JoinColumn(name = "roleId"),
             inverseJoinColumns = @JoinColumn(name = "permissionId")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Permission> permissions;
-
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "")
 
     public Role(String name) {
         this.name = name;

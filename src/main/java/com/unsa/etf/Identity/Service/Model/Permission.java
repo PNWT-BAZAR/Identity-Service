@@ -3,6 +3,8 @@ package com.unsa.etf.Identity.Service.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -28,6 +30,7 @@ public class Permission {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "permissions")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Role> roles;
 
     public Permission(String name) {
