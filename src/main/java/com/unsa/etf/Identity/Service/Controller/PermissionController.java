@@ -2,6 +2,7 @@ package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.Permission;
 import com.unsa.etf.Identity.Service.Service.PermissionService;
+import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
 import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class PermissionController {
     public ResponseEntity<?> getPermissionById(@PathVariable("permissionId") String permissionId) {
         Permission permission = permissionService.getPermissionById(permissionId);
         if (permission == null) {
-            return ResponseEntity.status(409).body("Permission Does Not Exist!");
+            return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Permission Does Not Exist!"));
         }
         return ResponseEntity.status(200).body(permission);
     }
@@ -59,7 +60,7 @@ public class PermissionController {
         if (permissionService.deletePermission(permissionId)) {
             return ResponseEntity.status(200).body("Permission Successfully Deleted!");
         }
-        return ResponseEntity.status(409).body("Permission Does Not Exist!");
+        return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Permission Does Not Exist!"));
     }
 
     @DeleteMapping

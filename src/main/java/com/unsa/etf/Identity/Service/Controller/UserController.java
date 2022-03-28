@@ -3,6 +3,7 @@ package com.unsa.etf.Identity.Service.Controller;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Service.UserService;
 import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
+import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class UserController {
     public ResponseEntity<?> getUserById(@PathVariable("userId") String userId){
         User user = userService.getUserById(userId);
         if (user == null) {
-            return ResponseEntity.status(409).body("User Does Not Exist!");
+            return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
         }
         return ResponseEntity.status(200).body(user);
     }
@@ -41,7 +42,7 @@ public class UserController {
         if (identityValidator.isValid(user)) {
             User user1 = userService.addNewUser(user);
             if (user1 == null) {
-                return ResponseEntity.status(409).body("User Already Exists!");
+                return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
             }
             return ResponseEntity.status(200).body(user1);
         }
@@ -53,7 +54,7 @@ public class UserController {
         if(userService.deleteUserById(userId)){
             return ResponseEntity.status(200).body("User Successfully Deleted!");
         }
-        return ResponseEntity.status(409).body("User Does Not Exist!");
+        return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
     }
 
     @DeleteMapping

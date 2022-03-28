@@ -2,6 +2,7 @@ package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.Role;
 import com.unsa.etf.Identity.Service.Service.RoleService;
+import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
 import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class RoleController {
     public ResponseEntity<?> getRoleById(@PathVariable("roleId") String roleId) {
         Role role = roleService.getRoleById(roleId);
         if (role == null) {
-            return ResponseEntity.status(409).body("Role Does Not Exist!");
+            return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Role Does Not Exist!"));
         }
         return ResponseEntity.status(200).body(role);
     }
@@ -41,7 +42,7 @@ public class RoleController {
         if (identityValidator.isValid(role)) {
             Role role1 = roleService.addNewRole(role);
             if (role1 == null) {
-                return ResponseEntity.status(409).body("Role Already Exists!");
+                return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "Role Already Exists!"));
             }
             return ResponseEntity.status(200).body(role1);
         }
@@ -53,7 +54,7 @@ public class RoleController {
         if (roleService.deleteRole(roleId)) {
             return ResponseEntity.status(200).body("Role Successfully Deleted!");
         }
-        return ResponseEntity.status(409).body("Role Does Not Exist!");
+        return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Role Does Not Exist!"));
     }
 
     @DeleteMapping
