@@ -37,6 +37,12 @@ public class PermissionController {
         return ResponseEntity.status(200).body(permission);
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getPermissionWithName(@PathVariable("name") String name) {
+        List<Permission> permissions = permissionService.getPermissionWithName(name);
+        return ResponseEntity.status(200).body(permissions);
+    }
+
     @PostMapping
     public ResponseEntity<?> createPermission(@RequestBody Permission permission){
         if (identityValidator.isValid(permission)) {

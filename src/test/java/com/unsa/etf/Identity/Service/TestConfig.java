@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @EnableJpaRepositories
 @EnableTransactionManagement
 @PropertySource("classpath:application-test.properties")
-public class AppConfig {
+public class TestConfig {
 
     @Autowired
     private Environment env;

@@ -14,4 +14,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u FROM User u WHERE u.role = ?1")
     List<User> findUsersByRole(Role role);
+
+    @Query("SELECT u FROM User u WHERE concat(u.firstName, ' ', u.lastName) LIKE concat('%', ?1, '%')")
+    List<User> findUsersByFirstOrLastName(String name);
+
+    @Query("SELECT u FROM User u ORDER BY u.lastName")
+    List<User> orderByLastName();
 }

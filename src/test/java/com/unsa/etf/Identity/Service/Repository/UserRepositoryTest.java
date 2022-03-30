@@ -1,6 +1,6 @@
 package com.unsa.etf.Identity.Service.Repository;
 
-import com.unsa.etf.Identity.Service.AppConfig;
+import com.unsa.etf.Identity.Service.TestConfig;
 import com.unsa.etf.Identity.Service.Model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ContextConfiguration(
-        classes = {AppConfig.class},
+        classes = {TestConfig.class},
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest
@@ -66,10 +66,7 @@ class UserRepositoryTest {
                 "Sulejmana Filipovica 10",
                 null);
 
-        testEntityManager.persist(faruk);
-        testEntityManager.persist(kemal);
-        testEntityManager.persist(taida);
-        testEntityManager.flush();
+        userRepository.saveAll(Arrays.asList(faruk, kemal, taida));
 
         List<User> userList = userRepository.findAll();
 
@@ -107,5 +104,42 @@ class UserRepositoryTest {
 
         userRepository.delete(user);
         assertTrue(userRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void getUsersByName() {
+        User faruk = new User(
+                "Faruk",
+                "Smajlovic",
+                "fsmajlovic",
+                "do3218uejd",
+                "fsmajlovic2@etf.unsa.ba",
+                "061111222",
+                "Envera Sehovica 24",
+                null);
+        User kemal = new User(
+                "Kemal",
+                "Lazovic",
+                "klazovic1",
+                "jdoa9920",
+                "klazovic1@etf.unsa.ba",
+                "061333444",
+                "Podbudakovici 4",
+                null);
+
+        User taida = new User(
+                "Taida",
+                "Kadric",
+                "tkadric28",
+                "da09dasp",
+                "tkadric1@etf.unsa.ba",
+                "061555666",
+                "Sulejmana Filipovica 10",
+                null);
+
+        userRepository.saveAll(Arrays.asList(faruk, kemal, taida));
+
+        List<User> users = userRepository.findUsersByFirstOrLastName("vic");
+        assertEquals(users, Arrays.asList(faruk, kemal));
     }
 }

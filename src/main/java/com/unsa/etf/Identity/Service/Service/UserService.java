@@ -72,4 +72,12 @@ public class UserService {
         }
         userRepository.saveAll(users);
     }
+
+    public List<User> getUsersByName(String name) {
+        return userRepository.findUsersByFirstOrLastName(name);
+    }
+
+    public List<User> sortByLastName() {
+        return userRepository.orderByLastName();
+    }
 }

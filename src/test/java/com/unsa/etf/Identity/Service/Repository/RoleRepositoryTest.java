@@ -1,6 +1,6 @@
 package com.unsa.etf.Identity.Service.Repository;
 
-import com.unsa.etf.Identity.Service.AppConfig;
+import com.unsa.etf.Identity.Service.TestConfig;
 import com.unsa.etf.Identity.Service.Model.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ContextConfiguration(
-        classes = {AppConfig.class},
+        classes = {TestConfig.class},
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest

@@ -51,4 +51,8 @@ public class PermissionService {
     public void deleteAll() {
         permissionRepository.deleteAll();
     }
+
+    public List<Permission> getPermissionWithName(String name) {
+        return permissionRepository.findPermissionWhereNameLike(name);
+    }
 }

@@ -37,6 +37,18 @@ public class UserController {
         return ResponseEntity.status(200).body(user);
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getUserByName(@PathVariable("name") String name) {
+        List<User> users = userService.getUsersByName(name);
+        return ResponseEntity.status(200).body(users);
+    }
+
+    @GetMapping("/sort")
+    public ResponseEntity<?> sortByLastName() {
+        List<User> users = userService.sortByLastName();
+        return ResponseEntity.status(200).body(users);
+    }
+
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         if (identityValidator.isValid(user)) {
