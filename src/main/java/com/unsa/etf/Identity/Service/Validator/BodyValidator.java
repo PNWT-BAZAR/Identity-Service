@@ -9,7 +9,7 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 @Component
-public class IdentityValidator {
+public class BodyValidator {
     private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private static final Validator validator = validatorFactory.getValidator();
 

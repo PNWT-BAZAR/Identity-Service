@@ -3,7 +3,7 @@ package com.unsa.etf.Identity.Service.Controller;
 import com.unsa.etf.Identity.Service.Model.Role;
 import com.unsa.etf.Identity.Service.Service.RoleService;
 import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
-import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
+import com.unsa.etf.Identity.Service.Validator.BodyValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +15,12 @@ import java.util.List;
 public class RoleController {
 
     private final RoleService roleService;
-    private final IdentityValidator identityValidator;
+    private final BodyValidator bodyValidator;
 
     @Autowired
-    public RoleController(RoleService roleService, IdentityValidator identityValidator) {
+    public RoleController(RoleService roleService, BodyValidator bodyValidator) {
         this.roleService = roleService;
-        this.identityValidator = identityValidator;
+        this.bodyValidator = bodyValidator;
     }
 
     @GetMapping
@@ -39,14 +39,14 @@ public class RoleController {
 
     @PostMapping
     public ResponseEntity<?> createRole(@RequestBody Role role) {
-        if (identityValidator.isValid(role)) {
+        if (bodyValidator.isValid(role)) {
             Role role1 = roleService.addNewRole(role);
             if (role1 == null) {
                 return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "Role Already Exists!"));
             }
             return ResponseEntity.status(200).body(role1);
         }
-        return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(role));
+        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(role));
     }
 
     @DeleteMapping("/{roleId}")
@@ -65,11 +65,11 @@ public class RoleController {
 
     @PutMapping
     public ResponseEntity<?> updateRole(@RequestBody Role role) {
-        if (identityValidator.isValid(role)) {
+        if (bodyValidator.isValid(role)) {
             Role updatedRole = roleService.updateRole(role);
             return ResponseEntity.status(200).body(updatedRole);
         }
-        return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(role));
+        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(role));
     }
 
 }

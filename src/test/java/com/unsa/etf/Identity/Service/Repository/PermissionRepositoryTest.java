@@ -49,7 +49,6 @@ class PermissionRepositoryTest {
 
         List<Permission> permissionList = permissionRepository.findAll();
 
-//        assertTrue(permissionList.contains(Arrays.asList(permission0, permission1, permission2, permission3)));
         assertEquals(permissionList, Arrays.asList(permission0, permission1, permission2, permission3));
     }
 
@@ -69,5 +68,19 @@ class PermissionRepositoryTest {
 
         permissionRepository.delete(permission);
         assertTrue(permissionRepository.findPermissionByName("Permisija").isEmpty());
+    }
+
+    @Test
+    public void getPermissionsWithNameLike() {
+        Permission permission1 = new Permission("Edit products");
+        Permission permission2 = new Permission("View products");
+        Permission permission3 = new Permission("Delete products");
+        Permission permission4 = new Permission("Add to cart");
+
+        permissionRepository.saveAll(Arrays.asList(permission1, permission2, permission3, permission4));
+
+        List<Permission> permissions = permissionRepository.findPermissionWhereNameLike("oduc");
+
+        assertEquals(permissions, Arrays.asList(permission1, permission2, permission3));
     }
 }

@@ -3,7 +3,7 @@ package com.unsa.etf.Identity.Service.Controller;
 import com.unsa.etf.Identity.Service.Model.Permission;
 import com.unsa.etf.Identity.Service.Service.PermissionService;
 import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
-import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
+import com.unsa.etf.Identity.Service.Validator.BodyValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +15,12 @@ import java.util.List;
 public class PermissionController {
 
     private final PermissionService permissionService;
-    private final IdentityValidator identityValidator;
+    private final BodyValidator bodyValidator;
 
     @Autowired
-    public PermissionController(PermissionService permissionService, IdentityValidator identityValidator) {
+    public PermissionController(PermissionService permissionService, BodyValidator bodyValidator) {
         this.permissionService = permissionService;
-        this.identityValidator = identityValidator;
+        this.bodyValidator = bodyValidator;
     }
 
     @GetMapping
@@ -45,20 +45,20 @@ public class PermissionController {
 
     @PostMapping
     public ResponseEntity<?> createPermission(@RequestBody Permission permission){
-        if (identityValidator.isValid(permission)) {
+        if (bodyValidator.isValid(permission)) {
             Permission permission1 = permissionService.addNewPermission(permission);
             return ResponseEntity.status(200).body(permission1);
         }
-        return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(permission));
+        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(permission));
     }
 
     @PutMapping
     public ResponseEntity<?> updatePermission(@RequestBody Permission permission) {
-        if (identityValidator.isValid(permission)) {
+        if (bodyValidator.isValid(permission)) {
             Permission updatedPermission = permissionService.updatePermission(permission);
             return ResponseEntity.status(200).body(updatedPermission);
         }
-        return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(permission));
+        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(permission));
     }
 
     @DeleteMapping("/{permissionId}")

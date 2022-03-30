@@ -2,7 +2,7 @@ package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Service.UserService;
-import com.unsa.etf.Identity.Service.Validator.IdentityValidator;
+import com.unsa.etf.Identity.Service.Validator.BodyValidator;
 import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +15,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final IdentityValidator identityValidator;
+    private final BodyValidator bodyValidator;
 
     @Autowired
-    public UserController(UserService userService, IdentityValidator identityValidator) {
+    public UserController(UserService userService, BodyValidator bodyValidator) {
         this.userService = userService;
-        this.identityValidator = identityValidator;
+        this.bodyValidator = bodyValidator;
     }
 
     @GetMapping
@@ -51,14 +51,14 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        if (identityValidator.isValid(user)) {
+        if (bodyValidator.isValid(user)) {
             User user1 = userService.addNewUser(user);
             if (user1 == null) {
                 return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
             }
             return ResponseEntity.status(200).body(user1);
         }
-        return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(user));
+        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(user));
     }
 
     @DeleteMapping("/{userId}")
@@ -77,10 +77,10 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody User user) {
-        if (identityValidator.isValid(user)) {
+        if (bodyValidator.isValid(user)) {
             User updatedUser = userService.updateUser(user);
             return ResponseEntity.status(200).body(updatedUser);
         }
-        return ResponseEntity.status(409).body(identityValidator.determineConstraintViolation(user));
+        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(user));
     }
 }
