@@ -9,10 +9,12 @@ import com.unsa.etf.Identity.Service.Repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Arrays;
 
+@EnableDiscoveryClient
 @SpringBootApplication
 public class IdentityServiceApplication {
 
