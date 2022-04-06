@@ -44,9 +44,10 @@ public class RoleService {
         return false;
     }
 
-    public void deleteAll() {
+    public boolean deleteAll() {
         userService.setAllRolesToNull();
         roleRepository.deleteAll();
+        return true;
     }
 
     public Role updateRole(Role role) {

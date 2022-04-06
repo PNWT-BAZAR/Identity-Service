@@ -1,4 +1,4 @@
-package com.unsa.etf.Identity.Service.Validator;
+package com.unsa.etf.Identity.Service.Responses;
 
 import lombok.*;
 

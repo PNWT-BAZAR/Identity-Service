@@ -20,60 +20,60 @@ public class IdentityServiceApplication {
 		SpringApplication.run(IdentityServiceApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner commandLineRunner (PermissionRepository permissionRepository,
-										 RoleRepository roleRepository,
-										 UserRepository userRepository) {
-
-		return args -> {
-
-			Role admin = new Role("Administrator");
-			Role shopper = new Role("Shopper");
-
-			roleRepository.saveAll(Arrays.asList(admin, shopper));
-
-			Permission permission1 = new Permission("Edit products");
-			Permission permission2 = new Permission("View products");
-			Permission permission3 = new Permission("Delete products");
-			Permission permission4 = new Permission("Add to cart");
-
-			permissionRepository.saveAll(Arrays.asList(permission1, permission2, permission3, permission4));
-
-			admin.setPermissions(Arrays.asList(permission1, permission2, permission3));
-			shopper.setPermissions(Arrays.asList(permission2, permission4));
-
-			roleRepository.saveAll(Arrays.asList(admin, shopper));
-
-			User faruk = new User(
-						"Faruk",
-						"Smajlovic",
-						"fsmajlovic",
-						"do3218uejd",
-						"fsmajlovic2@etf.unsa.ba",
-						"061111222",
-						"Envera Sehovica 24",
-						admin);
-			User kemal = new User(
-						"Kemal",
-						"Lazovic",
-						"klazovic1",
-						"jdoa9920",
-						"klazovic1@etf.unsa.ba",
-						"061333444",
-						"Podbudakovici 4",
-						shopper);
-
-			User taida = new User(
-						"Taida",
-						"Kadric",
-						"tkadric28",
-						"da09dasp",
-						"tkadric1@etf.unsa.ba",
-						"061555666",
-						"Sulejmana Filipovica 10",
-						shopper);
-
-			userRepository.saveAll(Arrays.asList(faruk, kemal, taida));
-		};
-	}
+//	@Bean
+//	CommandLineRunner commandLineRunner (PermissionRepository permissionRepository,
+//										 RoleRepository roleRepository,
+//										 UserRepository userRepository) {
+//
+//		return args -> {
+//
+//			Role admin = new Role("Administrator");
+//			Role shopper = new Role("Shopper");
+//
+//			roleRepository.saveAll(Arrays.asList(admin, shopper));
+//
+//			Permission permission1 = new Permission("Edit products");
+//			Permission permission2 = new Permission("View products");
+//			Permission permission3 = new Permission("Delete products");
+//			Permission permission4 = new Permission("Add to cart");
+//
+//			permissionRepository.saveAll(Arrays.asList(permission1, permission2, permission3, permission4));
+//
+//			admin.setPermissions(Arrays.asList(permission1, permission2, permission3));
+//			shopper.setPermissions(Arrays.asList(permission2, permission4));
+//
+//			roleRepository.saveAll(Arrays.asList(admin, shopper));
+//
+//			User faruk = new User(
+//						"Faruk",
+//						"Smajlovic",
+//						"fsmajlovic",
+//						"do3218uejd",
+//						"fsmajlovic2@etf.unsa.ba",
+//						"061111222",
+//						"Envera Sehovica 24",
+//						admin);
+//			User kemal = new User(
+//						"Kemal",
+//						"Lazovic",
+//						"klazovic1",
+//						"jdoa9920",
+//						"klazovic1@etf.unsa.ba",
+//						"061333444",
+//						"Podbudakovici 4",
+//						shopper);
+//
+//			User taida = new User(
+//						"Taida",
+//						"Kadric",
+//						"tkadric28",
+//						"da09dasp",
+//						"tkadric1@etf.unsa.ba",
+//						"061555666",
+//						"Sulejmana Filipovica 10",
+//						shopper);
+//
+//			userRepository.saveAll(Arrays.asList(faruk, kemal, taida));
+//		};
+//	}
 }

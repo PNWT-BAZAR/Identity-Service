@@ -3,7 +3,7 @@ package com.unsa.etf.Identity.Service.Controller;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Service.UserService;
 import com.unsa.etf.Identity.Service.Validator.BodyValidator;
-import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
+import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

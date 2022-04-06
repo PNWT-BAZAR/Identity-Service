@@ -5,6 +5,7 @@ import com.unsa.etf.Identity.Service.Repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +49,9 @@ public class PermissionService {
         return false;
     }
 
-    public void deleteAll() {
+    public boolean deleteAll() {
         permissionRepository.deleteAll();
+        return true;
     }
 
     public List<Permission> getPermissionWithName(String name) {

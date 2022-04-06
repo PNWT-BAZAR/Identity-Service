@@ -2,7 +2,7 @@ package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.Role;
 import com.unsa.etf.Identity.Service.Service.RoleService;
-import com.unsa.etf.Identity.Service.Validator.BadRequestResponseBody;
+import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody;
 import com.unsa.etf.Identity.Service.Validator.BodyValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

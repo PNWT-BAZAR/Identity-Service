@@ -38,8 +38,9 @@ public class UserService {
         return false;
     }
 
-    public void deleteAllUsers() {
+    public boolean deleteAllUsers() {
         userRepository.deleteAll();
+        return true;
     }
 
     public User updateUser(User user) {
