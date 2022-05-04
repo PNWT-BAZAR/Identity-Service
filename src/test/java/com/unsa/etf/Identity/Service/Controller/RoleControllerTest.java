@@ -38,7 +38,8 @@ class RoleControllerTest {
         mockMvc.perform(get("/roles"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.statusCode", is(200)))
+                .andExpect(jsonPath("$.objectsList", hasSize(0)));
     }
 
     @Test
@@ -50,13 +51,11 @@ class RoleControllerTest {
         mockMvc.perform(get("/roles"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(role1.getId())))
-                .andExpect(jsonPath("$[0].name", is("P1")))
-                .andExpect(jsonPath("$[1].id", is(role2.getId())))
-                .andExpect(jsonPath("$[1].name", is("P2")))
-                .andExpect(jsonPath("$[2].id", is(role3.getId())))
-                .andExpect(jsonPath("$[2].name", is("P3")));
+                .andExpect(jsonPath("$.statusCode", is(200)))
+                .andExpect(jsonPath("$.objectsList", hasSize(3)))
+                .andExpect(jsonPath("$.objectsList[0].name", is("P1")))
+                .andExpect(jsonPath("$.objectsList[1].name", is("P2")))
+                .andExpect(jsonPath("$.objectsList[2].name", is("P3")));
     }
 
     @Test
@@ -66,8 +65,7 @@ class RoleControllerTest {
         mockMvc.perform(get("/roles/{roleId}", "id"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(role.getId())))
-                .andExpect(jsonPath("$.name", is("R")));
+                .andExpect(jsonPath("$.object.name", is("R")));
     }
 
     @Test
@@ -75,8 +73,9 @@ class RoleControllerTest {
         given(roleService.deleteRole("id")).willReturn(false);
         mockMvc.perform(delete("/roles/{roleId}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message", is("Role Does Not Exist!")));
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is("Error has occurred!")))
+                .andExpect(jsonPath("$.error.message", is("Role Does Not Exist!")));
     }
 
     @Test
@@ -85,7 +84,7 @@ class RoleControllerTest {
         mockMvc.perform(delete("/roles/{roleId}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("Role Successfully Deleted!")));
+                .andExpect(jsonPath("$.message", is("Role Successfully Deleted!")));
     }
 
     @Test
@@ -94,6 +93,6 @@ class RoleControllerTest {
         mockMvc.perform(delete("/roles")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("Roles Successfully Deleted!")));
+                .andExpect(jsonPath("$.message", is("Roles Successfully Deleted!")));
     }
 }

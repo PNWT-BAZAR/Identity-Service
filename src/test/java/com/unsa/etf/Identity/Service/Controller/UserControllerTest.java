@@ -38,7 +38,8 @@ class UserControllerTest {
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.statusCode", is(200)))
+                .andExpect(jsonPath("$.objectsList", hasSize(0)));
     }
 
     @Test
@@ -74,34 +75,32 @@ class UserControllerTest {
         doReturn(Lists.newArrayList(faruk, kemal, taida)).when(userService).getUsers();
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusCode", is(200)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(faruk.getId())))
-                .andExpect(jsonPath("$[0].firstName", is("Faruk")))
-                .andExpect(jsonPath("$[0].lastName", is("Smajlovic")))
-                .andExpect(jsonPath("$[0].username", is("fsmajlovic")))
-                .andExpect(jsonPath("$[0].passwordHash", is("do3218uejd")))
-                .andExpect(jsonPath("$[0].email", is("fsmajlovic2@etf.unsa.ba")))
-                .andExpect(jsonPath("$[0].phoneNumber", is("061111222")))
-                .andExpect(jsonPath("$[0].shippingAddress", is("Envera Sehovica 24")))
+                .andExpect(jsonPath("$.objectsList", hasSize(3)))
+                .andExpect(jsonPath("$.objectsList[0].firstName", is("Faruk")))
+                .andExpect(jsonPath("$.objectsList[0].lastName", is("Smajlovic")))
+                .andExpect(jsonPath("$.objectsList[0].username", is("fsmajlovic")))
+                .andExpect(jsonPath("$.objectsList[0].passwordHash", is("do3218uejd")))
+                .andExpect(jsonPath("$.objectsList[0].email", is("fsmajlovic2@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[0].phoneNumber", is("061111222")))
+                .andExpect(jsonPath("$.objectsList[0].shippingAddress", is("Envera Sehovica 24")))
 
-                .andExpect(jsonPath("$[1].id", is(kemal.getId())))
-                .andExpect(jsonPath("$[1].firstName", is("Kemal")))
-                .andExpect(jsonPath("$[1].lastName", is("Lazovic")))
-                .andExpect(jsonPath("$[1].username", is("klazovic1")))
-                .andExpect(jsonPath("$[1].passwordHash", is("jdoa9920")))
-                .andExpect(jsonPath("$[1].email", is("klazovic1@etf.unsa.ba")))
-                .andExpect(jsonPath("$[1].phoneNumber", is("061333444")))
-                .andExpect(jsonPath("$[1].shippingAddress", is("Podbudakovici 4")))
+                .andExpect(jsonPath("$.objectsList[1].firstName", is("Kemal")))
+                .andExpect(jsonPath("$.objectsList[1].lastName", is("Lazovic")))
+                .andExpect(jsonPath("$.objectsList[1].username", is("klazovic1")))
+                .andExpect(jsonPath("$.objectsList[1].passwordHash", is("jdoa9920")))
+                .andExpect(jsonPath("$.objectsList[1].email", is("klazovic1@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[1].phoneNumber", is("061333444")))
+                .andExpect(jsonPath("$.objectsList[1].shippingAddress", is("Podbudakovici 4")))
 
-                .andExpect(jsonPath("$[2].id", is(taida.getId())))
-                .andExpect(jsonPath("$[2].firstName", is("Taida")))
-                .andExpect(jsonPath("$[2].lastName", is("Kadric")))
-                .andExpect(jsonPath("$[2].username", is("tkadric28")))
-                .andExpect(jsonPath("$[2].passwordHash", is("da09dasp")))
-                .andExpect(jsonPath("$[2].email", is("tkadric1@etf.unsa.ba")))
-                .andExpect(jsonPath("$[2].phoneNumber", is("061555666")))
-                .andExpect(jsonPath("$[2].shippingAddress", is("Sulejmana Filipovica 10")));
+                .andExpect(jsonPath("$.objectsList[2].firstName", is("Taida")))
+                .andExpect(jsonPath("$.objectsList[2].lastName", is("Kadric")))
+                .andExpect(jsonPath("$.objectsList[2].username", is("tkadric28")))
+                .andExpect(jsonPath("$.objectsList[2].passwordHash", is("da09dasp")))
+                .andExpect(jsonPath("$.objectsList[2].email", is("tkadric1@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[2].phoneNumber", is("061555666")))
+                .andExpect(jsonPath("$.objectsList[2].shippingAddress", is("Sulejmana Filipovica 10")));
     }
 
     @Test
@@ -119,14 +118,13 @@ class UserControllerTest {
         mockMvc.perform(get("/users/{userId}", "id"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(taida.getId())))
-                .andExpect(jsonPath("$.firstName", is("Taida")))
-                .andExpect(jsonPath("$.lastName", is("Kadric")))
-                .andExpect(jsonPath("$.username", is("tkadric28")))
-                .andExpect(jsonPath("$.passwordHash", is("da09dasp")))
-                .andExpect(jsonPath("$.email", is("tkadric1@etf.unsa.ba")))
-                .andExpect(jsonPath("$.phoneNumber", is("061555666")))
-                .andExpect(jsonPath("$.shippingAddress", is("Sulejmana Filipovica 10")));
+                .andExpect(jsonPath("$.object.firstName", is("Taida")))
+                .andExpect(jsonPath("$.object.lastName", is("Kadric")))
+                .andExpect(jsonPath("$.object.username", is("tkadric28")))
+                .andExpect(jsonPath("$.object.passwordHash", is("da09dasp")))
+                .andExpect(jsonPath("$.object.email", is("tkadric1@etf.unsa.ba")))
+                .andExpect(jsonPath("$.object.phoneNumber", is("061555666")))
+                .andExpect(jsonPath("$.object.shippingAddress", is("Sulejmana Filipovica 10")));
     }
 
     @Test
@@ -153,24 +151,26 @@ class UserControllerTest {
         given(userService.getUsersByName("vic")).willReturn(Lists.newArrayList(faruk, kemal));
         mockMvc.perform(get("/users/name/{name}", "vic"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusCode", is(200)))
+                .andExpect(jsonPath("$.objectsList", hasSize(2)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id", is(faruk.getId())))
-                .andExpect(jsonPath("$[0].firstName", is("Faruk")))
-                .andExpect(jsonPath("$[0].lastName", is("Smajlovic")))
-                .andExpect(jsonPath("$[0].username", is("fsmajlovic")))
-                .andExpect(jsonPath("$[0].passwordHash", is("do3218uejd")))
-                .andExpect(jsonPath("$[0].email", is("fsmajlovic2@etf.unsa.ba")))
-                .andExpect(jsonPath("$[0].phoneNumber", is("061111222")))
-                .andExpect(jsonPath("$[0].shippingAddress", is("Envera Sehovica 24")))
 
-                .andExpect(jsonPath("$[1].id", is(kemal.getId())))
-                .andExpect(jsonPath("$[1].firstName", is("Kemal")))
-                .andExpect(jsonPath("$[1].lastName", is("Lazovic")))
-                .andExpect(jsonPath("$[1].username", is("klazovic1")))
-                .andExpect(jsonPath("$[1].passwordHash", is("jdoa9920")))
-                .andExpect(jsonPath("$[1].email", is("klazovic1@etf.unsa.ba")))
-                .andExpect(jsonPath("$[1].phoneNumber", is("061333444")))
-                .andExpect(jsonPath("$[1].shippingAddress", is("Podbudakovici 4")));
+                .andExpect(jsonPath("$.objectsList[0].id", is(faruk.getId())))
+                .andExpect(jsonPath("$.objectsList[0].firstName", is("Faruk")))
+                .andExpect(jsonPath("$.objectsList[0].lastName", is("Smajlovic")))
+                .andExpect(jsonPath("$.objectsList[0].username", is("fsmajlovic")))
+                .andExpect(jsonPath("$.objectsList[0].passwordHash", is("do3218uejd")))
+                .andExpect(jsonPath("$.objectsList[0].email", is("fsmajlovic2@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[0].phoneNumber", is("061111222")))
+                .andExpect(jsonPath("$.objectsList[0].shippingAddress", is("Envera Sehovica 24")))
+
+                .andExpect(jsonPath("$.objectsList[1].firstName", is("Kemal")))
+                .andExpect(jsonPath("$.objectsList[1].lastName", is("Lazovic")))
+                .andExpect(jsonPath("$.objectsList[1].username", is("klazovic1")))
+                .andExpect(jsonPath("$.objectsList[1].passwordHash", is("jdoa9920")))
+                .andExpect(jsonPath("$.objectsList[1].email", is("klazovic1@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[1].phoneNumber", is("061333444")))
+                .andExpect(jsonPath("$.objectsList[1].shippingAddress", is("Podbudakovici 4")));
     }
 
     @Test
@@ -207,34 +207,32 @@ class UserControllerTest {
         mockMvc.perform(get("/users/sort"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$.statusCode", is(200)))
+                .andExpect(jsonPath("$.objectsList", hasSize(3)))
 
-                .andExpect(jsonPath("$[0].id", is(taida.getId())))
-                .andExpect(jsonPath("$[0].firstName", is("Taida")))
-                .andExpect(jsonPath("$[0].lastName", is("Kadric")))
-                .andExpect(jsonPath("$[0].username", is("tkadric28")))
-                .andExpect(jsonPath("$[0].passwordHash", is("da09dasp")))
-                .andExpect(jsonPath("$[0].email", is("tkadric1@etf.unsa.ba")))
-                .andExpect(jsonPath("$[0].phoneNumber", is("061555666")))
-                .andExpect(jsonPath("$[0].shippingAddress", is("Sulejmana Filipovica 10")))
+                .andExpect(jsonPath("$.objectsList[0].firstName", is("Taida")))
+                .andExpect(jsonPath("$.objectsList[0].lastName", is("Kadric")))
+                .andExpect(jsonPath("$.objectsList[0].username", is("tkadric28")))
+                .andExpect(jsonPath("$.objectsList[0].passwordHash", is("da09dasp")))
+                .andExpect(jsonPath("$.objectsList[0].email", is("tkadric1@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[0].phoneNumber", is("061555666")))
+                .andExpect(jsonPath("$.objectsList[0].shippingAddress", is("Sulejmana Filipovica 10")))
 
-                .andExpect(jsonPath("$[1].id", is(kemal.getId())))
-                .andExpect(jsonPath("$[1].firstName", is("Kemal")))
-                .andExpect(jsonPath("$[1].lastName", is("Lazovic")))
-                .andExpect(jsonPath("$[1].username", is("klazovic1")))
-                .andExpect(jsonPath("$[1].passwordHash", is("jdoa9920")))
-                .andExpect(jsonPath("$[1].email", is("klazovic1@etf.unsa.ba")))
-                .andExpect(jsonPath("$[1].phoneNumber", is("061333444")))
-                .andExpect(jsonPath("$[1].shippingAddress", is("Podbudakovici 4")))
+                .andExpect(jsonPath("$.objectsList[1].firstName", is("Kemal")))
+                .andExpect(jsonPath("$.objectsList[1].lastName", is("Lazovic")))
+                .andExpect(jsonPath("$.objectsList[1].username", is("klazovic1")))
+                .andExpect(jsonPath("$.objectsList[1].passwordHash", is("jdoa9920")))
+                .andExpect(jsonPath("$.objectsList[1].email", is("klazovic1@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[1].phoneNumber", is("061333444")))
+                .andExpect(jsonPath("$.objectsList[1].shippingAddress", is("Podbudakovici 4")))
 
-                .andExpect(jsonPath("$[2].id", is(faruk.getId())))
-                .andExpect(jsonPath("$[2].firstName", is("Faruk")))
-                .andExpect(jsonPath("$[2].lastName", is("Smajlovic")))
-                .andExpect(jsonPath("$[2].username", is("fsmajlovic")))
-                .andExpect(jsonPath("$[2].passwordHash", is("do3218uejd")))
-                .andExpect(jsonPath("$[2].email", is("fsmajlovic2@etf.unsa.ba")))
-                .andExpect(jsonPath("$[2].phoneNumber", is("061111222")))
-                .andExpect(jsonPath("$[2].shippingAddress", is("Envera Sehovica 24")));
+                .andExpect(jsonPath("$.objectsList[2].firstName", is("Faruk")))
+                .andExpect(jsonPath("$.objectsList[2].lastName", is("Smajlovic")))
+                .andExpect(jsonPath("$.objectsList[2].username", is("fsmajlovic")))
+                .andExpect(jsonPath("$.objectsList[2].passwordHash", is("do3218uejd")))
+                .andExpect(jsonPath("$.objectsList[2].email", is("fsmajlovic2@etf.unsa.ba")))
+                .andExpect(jsonPath("$.objectsList[2].phoneNumber", is("061111222")))
+                .andExpect(jsonPath("$.objectsList[2].shippingAddress", is("Envera Sehovica 24")));
     }
 
     @Test
@@ -242,8 +240,9 @@ class UserControllerTest {
         given(userService.deleteUserById("id")).willReturn(false);
         mockMvc.perform(delete("/users/{userId}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message", is("User Does Not Exist!")));
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.error.message", is("User Does Not Exist!")))
+                .andExpect(jsonPath("$.message", is("Error has occurred!")));
     }
 
     @Test
@@ -252,7 +251,7 @@ class UserControllerTest {
         mockMvc.perform(delete("/users/{userId}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("User Successfully Deleted!")));
+                .andExpect(jsonPath("$.message", is("User Successfully Deleted!")));
     }
 
     @Test
@@ -261,6 +260,7 @@ class UserControllerTest {
         mockMvc.perform(delete("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("Users Successfully Deleted!")));
+                .andExpect(jsonPath("$.statusCode", is(200)))
+                .andExpect(jsonPath("$.message", is("Users Successfully Deleted!")));
     }
 }

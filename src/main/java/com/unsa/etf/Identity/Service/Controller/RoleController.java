@@ -1,6 +1,9 @@
 package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.Role;
+import com.unsa.etf.Identity.Service.Responses.ObjectDeletionResponse;
+import com.unsa.etf.Identity.Service.Responses.ObjectListResponse;
+import com.unsa.etf.Identity.Service.Responses.ObjectResponse;
 import com.unsa.etf.Identity.Service.Service.RoleService;
 import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody;
 import com.unsa.etf.Identity.Service.Validator.BodyValidator;
@@ -24,52 +27,55 @@ public class RoleController {
     }
 
     @GetMapping
-    public List<Role> getRoles() {
-        return roleService.getRoles();
+    public ObjectListResponse<Role> getRoles() {
+        return new ObjectListResponse<>(200, roleService.getRoles(), null);
     }
 
     @GetMapping("/{roleId}")
-    public ResponseEntity<?> getRoleById(@PathVariable("roleId") String roleId) {
+    public ObjectResponse<Role> getRoleById(@PathVariable("roleId") String roleId) {
         Role role = roleService.getRoleById(roleId);
         if (role == null) {
-            return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Role Does Not Exist!"));
+            return new ObjectResponse<>(409, null,
+                    new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Role Does Not Exist!"));
         }
-        return ResponseEntity.status(200).body(role);
+        return new ObjectResponse<>(200, role, null);
     }
 
     @PostMapping
-    public ResponseEntity<?> createRole(@RequestBody Role role) {
+    public ObjectResponse<Role> createRole(@RequestBody Role role) {
         if (bodyValidator.isValid(role)) {
             Role role1 = roleService.addNewRole(role);
             if (role1 == null) {
-                return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "Role Already Exists!"));
+                return new ObjectResponse<>(409, null,
+                        new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "Role Already Exists!"));
             }
-            return ResponseEntity.status(200).body(role1);
+            return new ObjectResponse<>(200, role1, null);
         }
-        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(role));
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(role));
     }
 
     @DeleteMapping("/{roleId}")
-    public ResponseEntity<?> deleteRole(@PathVariable("roleId") String roleId) {
+    public ObjectDeletionResponse deleteRole(@PathVariable("roleId") String roleId) {
         if (roleService.deleteRole(roleId)) {
-            return ResponseEntity.status(200).body("Role Successfully Deleted!");
+            return new ObjectDeletionResponse(200, "Role Successfully Deleted!", null);
         }
-        return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Role Does Not Exist!"));
+        return new ObjectDeletionResponse(409, "Error has occurred!",
+                new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Role Does Not Exist!"));
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll() {
+    public ObjectDeletionResponse deleteAll() {
         roleService.deleteAll();
-        return ResponseEntity.status(200).body("Roles Successfully Deleted!");
+        return new ObjectDeletionResponse(200, "Roles Successfully Deleted!", null);
     }
 
     @PutMapping
-    public ResponseEntity<?> updateRole(@RequestBody Role role) {
+    public ObjectResponse<Role> updateRole(@RequestBody Role role) {
         if (bodyValidator.isValid(role)) {
             Role updatedRole = roleService.updateRole(role);
-            return ResponseEntity.status(200).body(updatedRole);
+            return new ObjectResponse<>(200, updatedRole, null);
         }
-        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(role));
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(role));
     }
 
 }

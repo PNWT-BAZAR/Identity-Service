@@ -1,6 +1,9 @@
 package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.Permission;
+import com.unsa.etf.Identity.Service.Responses.ObjectDeletionResponse;
+import com.unsa.etf.Identity.Service.Responses.ObjectListResponse;
+import com.unsa.etf.Identity.Service.Responses.ObjectResponse;
 import com.unsa.etf.Identity.Service.Service.PermissionService;
 import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody;
 import com.unsa.etf.Identity.Service.Validator.BodyValidator;
@@ -24,54 +27,56 @@ public class PermissionController {
     }
 
     @GetMapping
-    public List<Permission> getPermissions() {
-        return permissionService.getPermissions();
+    public ObjectListResponse<Permission> getPermissions() {
+        return new ObjectListResponse<>(200, permissionService.getPermissions(), null);
     }
 
     @GetMapping("/{permissionId}")
-    public ResponseEntity<?> getPermissionById(@PathVariable("permissionId") String permissionId) {
+    public ObjectResponse<Permission> getPermissionById(@PathVariable("permissionId") String permissionId) {
         Permission permission = permissionService.getPermissionById(permissionId);
         if (permission == null) {
-            return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Permission Does Not Exist!"));
+            return new ObjectResponse<>(409, null,
+                    new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Permission Does Not Exist!"));
         }
-        return ResponseEntity.status(200).body(permission);
+        return new ObjectResponse<>(200, permission, null);
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<?> getPermissionWithName(@PathVariable("name") String name) {
+    public ObjectListResponse<Permission> getPermissionWithName(@PathVariable("name") String name) {
         List<Permission> permissions = permissionService.getPermissionWithName(name);
-        return ResponseEntity.status(200).body(permissions);
+        return new ObjectListResponse<>(200, permissions, null);
     }
 
     @PostMapping
-    public ResponseEntity<?> createPermission(@RequestBody Permission permission){
+    public ObjectResponse<Permission> createPermission(@RequestBody Permission permission){
         if (bodyValidator.isValid(permission)) {
             Permission permission1 = permissionService.addNewPermission(permission);
-            return ResponseEntity.status(200).body(permission1);
+            return new ObjectResponse<>(200, permission1, null);
         }
-        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(permission));
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(permission));
     }
 
     @PutMapping
-    public ResponseEntity<?> updatePermission(@RequestBody Permission permission) {
+    public ObjectResponse<Permission> updatePermission(@RequestBody Permission permission) {
         if (bodyValidator.isValid(permission)) {
             Permission updatedPermission = permissionService.updatePermission(permission);
-            return ResponseEntity.status(200).body(updatedPermission);
+            return new ObjectResponse<>(200, updatedPermission, null);
         }
-        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(permission));
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(permission));
     }
 
     @DeleteMapping("/{permissionId}")
-    public ResponseEntity<?> deletePermission(@PathVariable("permissionId") String permissionId) {
+    public ObjectDeletionResponse deletePermission(@PathVariable("permissionId") String permissionId) {
         if (permissionService.deletePermission(permissionId)) {
-            return ResponseEntity.status(200).body("Permission Successfully Deleted!");
+            return new ObjectDeletionResponse(200, "Permission Successfully Deleted!", null);
         }
-        return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Permission Does Not Exist!"));
+        return new ObjectDeletionResponse(409, "Error has occurred!",
+                new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "Permission Does Not Exist!"));
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll() {
+    public ObjectDeletionResponse deleteAll() {
         permissionService.deleteAll();
-        return ResponseEntity.status(200).body("Permissions Successfully Deleted!");
+        return new ObjectDeletionResponse(200, "Permissions Successfully Deleted!", null);
     }
 }

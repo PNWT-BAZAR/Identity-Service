@@ -1,6 +1,9 @@
 package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.User;
+import com.unsa.etf.Identity.Service.Responses.ObjectDeletionResponse;
+import com.unsa.etf.Identity.Service.Responses.ObjectListResponse;
+import com.unsa.etf.Identity.Service.Responses.ObjectResponse;
 import com.unsa.etf.Identity.Service.Service.UserService;
 import com.unsa.etf.Identity.Service.Validator.BodyValidator;
 import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody;
@@ -24,63 +27,66 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public ObjectListResponse<User> getUsers() {
+        return new ObjectListResponse<>(200, userService.getUsers(), null);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable("userId") String userId){
+    public ObjectResponse<User> getUserById(@PathVariable("userId") String userId){
         User user = userService.getUserById(userId);
         if (user == null) {
-            return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
+            return new ObjectResponse<>(409,null,
+                    new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
         }
-        return ResponseEntity.status(200).body(user);
+        return new ObjectResponse<>(200, user, null);
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<?> getUserByName(@PathVariable("name") String name) {
+    public ObjectListResponse<User> getUserByName(@PathVariable("name") String name) {
         List<User> users = userService.getUsersByName(name);
-        return ResponseEntity.status(200).body(users);
+        return new ObjectListResponse<>(200, users, null);
     }
 
     @GetMapping("/sort")
-    public ResponseEntity<?> sortByLastName() {
+    public ObjectListResponse<User> sortByLastName() {
         List<User> users = userService.sortByLastName();
-        return ResponseEntity.status(200).body(users);
+        return new ObjectListResponse<>(200, users, null);
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ObjectResponse<User> createUser(@RequestBody User user) {
         if (bodyValidator.isValid(user)) {
             User user1 = userService.addNewUser(user);
             if (user1 == null) {
-                return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
+                return new ObjectResponse<>(409, null,
+                        new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
             }
-            return ResponseEntity.status(200).body(user1);
+            return new ObjectResponse<>(200, user1, null);
         }
-        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(user));
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(user));
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable("userId") String userId) {
+    public ObjectDeletionResponse deleteUser(@PathVariable("userId") String userId) {
         if(userService.deleteUserById(userId)){
-            return ResponseEntity.status(200).body("User Successfully Deleted!");
+            return new ObjectDeletionResponse(200, "User Successfully Deleted!", null);
         }
-        return ResponseEntity.status(409).body(new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
+        return new ObjectDeletionResponse(409, "Error has occurred!",
+                new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll() {
+    public ObjectDeletionResponse deleteAll() {
         userService.deleteAllUsers();
-        return ResponseEntity.status(200).body("Users Successfully Deleted!");
+        return new ObjectDeletionResponse(200, "Users Successfully Deleted!", null);
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
+    public ObjectResponse<User> updateUser(@RequestBody User user) {
         if (bodyValidator.isValid(user)) {
             User updatedUser = userService.updateUser(user);
-            return ResponseEntity.status(200).body(updatedUser);
+            return new ObjectResponse<>(200, updatedUser, null);
         }
-        return ResponseEntity.status(409).body(bodyValidator.determineConstraintViolation(user));
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(user));
     }
 }

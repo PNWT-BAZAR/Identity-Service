@@ -49,7 +49,7 @@ class PermissionControllerTest {
         mockMvc.perform(get("/permissions"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.objectsList", hasSize(0)));
     }
 
     @Test
@@ -61,13 +61,10 @@ class PermissionControllerTest {
         mockMvc.perform(get("/permissions"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(permission1.getId())))
-                .andExpect(jsonPath("$[0].name", is("P1")))
-                .andExpect(jsonPath("$[1].id", is(permission2.getId())))
-                .andExpect(jsonPath("$[1].name", is("P2")))
-                .andExpect(jsonPath("$[2].id", is(permission3.getId())))
-                .andExpect(jsonPath("$[2].name", is("P3")));
+                .andExpect(jsonPath("$.objectsList", hasSize(3)))
+                .andExpect(jsonPath("$.objectsList[0].name", is("P1")))
+                .andExpect(jsonPath("$.objectsList[1].name", is("P2")))
+                .andExpect(jsonPath("$.objectsList[2].name", is("P3")));
     }
 
     @Test
@@ -77,8 +74,7 @@ class PermissionControllerTest {
         mockMvc.perform(get("/permissions/{permissionId}", "id"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(permission.getId())))
-                .andExpect(jsonPath("$.name", is("P")));
+                .andExpect(jsonPath("$.object.name", is("P")));
     }
 
     @Test
@@ -88,36 +84,19 @@ class PermissionControllerTest {
         given(permissionService.getPermissionWithName("Per")).willReturn(Lists.newArrayList(permission, permission1));
         mockMvc.perform(get("/permissions/name/{name}", "Per"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(permission.getId())))
-                .andExpect(jsonPath("$[0].name", is("Perm")))
-                .andExpect(jsonPath("$[1].id", is(permission1.getId())))
-                .andExpect(jsonPath("$[1].name", is("Permisija")));
+                .andExpect(jsonPath("$.objectsList", hasSize(2)))
+                .andExpect(jsonPath("$.objectsList[0].name", is("Perm")))
+                .andExpect(jsonPath("$.objectsList[1].name", is("Permisija")));
     }
-
-//    @Test
-//    void shouldCreateNewPermission() throws Exception {
-//        Permission permission = new Permission("Permission name");
-//
-//        given(permissionService.addNewPermission(permission)).willReturn(permission);
-//        mockMvc.perform(post("/permissions")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(asJsonString(permission)))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$", hasSize(1)))
-//                .andExpect(jsonPath("$.id", is(permission.getId())))
-//                .andExpect(jsonPath("$.name", is("Permission name")));
-//    }
 
     @Test
     public void permissionToBeDeletedDoesNotExistTest() throws Exception {
         given(permissionService.deletePermission("id")).willReturn(false);
         mockMvc.perform(delete("/permissions/{permissionId}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message", is("Permission Does Not Exist!")));
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is("Error has occurred!")))
+                .andExpect(jsonPath("$.error.message", is("Permission Does Not Exist!")));
     }
 
     @Test
@@ -126,7 +105,7 @@ class PermissionControllerTest {
         mockMvc.perform(delete("/permissions/{permissionId}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("Permission Successfully Deleted!")));
+                .andExpect(jsonPath("$.message", is("Permission Successfully Deleted!")));
     }
 
     @Test
@@ -135,6 +114,6 @@ class PermissionControllerTest {
         mockMvc.perform(delete("/permissions")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is("Permissions Successfully Deleted!")));
+                .andExpect(jsonPath("$.message", is("Permissions Successfully Deleted!")));
     }
 }
