@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u FROM User u ORDER BY u.lastName")
     List<User> orderByLastName();
+
+    @Query("SELECT u FROM User u WHERE u.username = ?1")
+    User findByUsername(String username);
 }

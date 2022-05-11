@@ -4,6 +4,7 @@ import com.unsa.etf.Identity.Service.Model.Role;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +14,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+//    private final BCryptPasswordEncoder encoder;
 
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+//        this.encoder = encoder;
     }
 
     public List<User> getUsers() {
@@ -52,6 +55,7 @@ public class UserService {
         if(userOptional.isPresent()) {
             return null;
         }
+//        user.setPasswordHash(encoder.encode(user.getPasswordHash()));
         userRepository.save(user);
         return user;
     }
@@ -80,5 +84,9 @@ public class UserService {
 
     public List<User> sortByLastName() {
         return userRepository.orderByLastName();
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

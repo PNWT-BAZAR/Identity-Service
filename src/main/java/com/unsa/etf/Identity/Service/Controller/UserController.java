@@ -1,6 +1,7 @@
 package com.unsa.etf.Identity.Service.Controller;
 
 import com.unsa.etf.Identity.Service.Model.User;
+import com.unsa.etf.Identity.Service.Requests.LoginRequest;
 import com.unsa.etf.Identity.Service.Responses.ObjectDeletionResponse;
 import com.unsa.etf.Identity.Service.Responses.ObjectListResponse;
 import com.unsa.etf.Identity.Service.Responses.ObjectResponse;
@@ -88,5 +89,10 @@ public class UserController {
             return new ObjectResponse<>(200, updatedUser, null);
         }
         return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(user));
+    }
+
+    @PostMapping("/login")
+    public void login (@RequestBody LoginRequest user) {
+        System.out.println("/login");
     }
 }

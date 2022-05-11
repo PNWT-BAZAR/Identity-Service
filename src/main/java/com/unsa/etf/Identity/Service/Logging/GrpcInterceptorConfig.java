@@ -1,4 +1,4 @@
-package com.unsa.etf.Identity.Service.logging;
+package com.unsa.etf.Identity.Service.Logging;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

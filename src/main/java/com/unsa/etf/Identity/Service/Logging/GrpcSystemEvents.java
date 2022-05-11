@@ -1,4 +1,4 @@
-package com.unsa.etf.Identity.Service.logging;
+package com.unsa.etf.Identity.Service.Logging;
 
 import com.unsa.etf.SystemEventsService.LogRequest;
 import com.unsa.etf.SystemEventsService.LoggingServiceGrpc;
