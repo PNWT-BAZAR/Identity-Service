@@ -1,7 +1,10 @@
 package com.unsa.etf.Identity.Service.Controller;
 
+import com.unsa.etf.Identity.Service.Model.RoleEnum;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Requests.LoginRequest;
+import com.unsa.etf.Identity.Service.Requests.SignupRequest;
+import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody.ErrorCode;
 import com.unsa.etf.Identity.Service.Responses.ObjectDeletionResponse;
 import com.unsa.etf.Identity.Service.Responses.ObjectListResponse;
 import com.unsa.etf.Identity.Service.Responses.ObjectResponse;
@@ -37,7 +40,7 @@ public class UserController {
         User user = userService.getUserById(userId);
         if (user == null) {
             return new ObjectResponse<>(409,null,
-                    new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
+                    new BadRequestResponseBody(ErrorCode.NOT_FOUND, "User Does Not Exist!"));
         }
         return new ObjectResponse<>(200, user, null);
     }
@@ -60,7 +63,7 @@ public class UserController {
             User user1 = userService.addNewUser(user);
             if (user1 == null) {
                 return new ObjectResponse<>(409, null,
-                        new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
+                        new BadRequestResponseBody(ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
             }
             return new ObjectResponse<>(200, user1, null);
         }
@@ -73,7 +76,7 @@ public class UserController {
             return new ObjectDeletionResponse(200, "User Successfully Deleted!", null);
         }
         return new ObjectDeletionResponse(409, "Error has occurred!",
-                new BadRequestResponseBody(BadRequestResponseBody.ErrorCode.NOT_FOUND, "User Does Not Exist!"));
+                new BadRequestResponseBody(ErrorCode.NOT_FOUND, "User Does Not Exist!"));
     }
 
     @DeleteMapping
@@ -94,5 +97,32 @@ public class UserController {
     @PostMapping("/login")
     public void login (@RequestBody LoginRequest user) {
         System.out.println("/login");
+    }
+
+    @PostMapping("/signup")
+    public ObjectResponse<User> signup (@RequestBody SignupRequest signupRequest){
+        var userTmp = convertSignupRequestToUserModel(signupRequest);
+        if(bodyValidator.isValid(userTmp)){
+            if(userService.existsByUsername(signupRequest.getUsername())){
+                return new ObjectResponse<>(409, null, new BadRequestResponseBody(ErrorCode.ALREADY_EXISTS, "Username is already taken!"));
+            }
+            if(userService.existsByEmail(signupRequest.getEmail())){
+                return new ObjectResponse<>(409, null, new BadRequestResponseBody(ErrorCode.ALREADY_EXISTS, "Email is already taken!"));
+            }
+            var createdUser = userService.signup(signupRequest);
+            return new ObjectResponse<>(200, createdUser, null);
+        }
+        return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(userTmp));
+    }
+
+    private User convertSignupRequestToUserModel (SignupRequest signupRequest){
+        return User.builder().firstName(signupRequest.getFirstName())
+                .lastName(signupRequest.getLastName())
+                .username(signupRequest.getUsername())
+                .email(signupRequest.getEmail())
+                .passwordHash(signupRequest.getPassword())
+                .phoneNumber(signupRequest.getPhoneNumber())
+                .shippingAddress(signupRequest.getShippingAddress())
+                .build();
     }
 }

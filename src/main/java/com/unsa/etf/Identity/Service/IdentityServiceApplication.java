@@ -2,6 +2,7 @@ package com.unsa.etf.Identity.Service;
 
 import com.unsa.etf.Identity.Service.Model.Permission;
 import com.unsa.etf.Identity.Service.Model.Role;
+import com.unsa.etf.Identity.Service.Model.RoleEnum;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Repository.PermissionRepository;
 import com.unsa.etf.Identity.Service.Repository.RoleRepository;
@@ -54,7 +55,7 @@ public class IdentityServiceApplication {
 						"fsmajlovic2@etf.unsa.ba",
 						"061111222",
 						"Envera Sehovica 24",
-						admin);
+						RoleEnum.ADMIN);
 			User kemal = new User(
 						"Kemal",
 						"Lazovic",
@@ -63,7 +64,7 @@ public class IdentityServiceApplication {
 						"klazovic1@etf.unsa.ba",
 						"061333444",
 						"Podbudakovici 4",
-						shopper);
+						RoleEnum.USER);
 
 			User taida = new User(
 						"Taida",
@@ -73,7 +74,7 @@ public class IdentityServiceApplication {
 						"tkadric1@etf.unsa.ba",
 						"061555666",
 						"Sulejmana Filipovica 10",
-						shopper);
+						RoleEnum.USER);
 
 			userRepository.saveAll(Arrays.asList(faruk, kemal, taida));
 		};

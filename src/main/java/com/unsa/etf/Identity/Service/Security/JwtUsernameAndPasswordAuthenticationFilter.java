@@ -1,11 +1,16 @@
 package com.unsa.etf.Identity.Service.Security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unsa.etf.Identity.Service.Service.UserDetailsServiceImpl;
+import com.unsa.etf.Identity.Service.Service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -18,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.PasswordAuthentication;
 import java.sql.Date;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -28,10 +34,15 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
     private final JwtConfig jwtConfig;
 
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authManager, JwtConfig jwtConfig) {
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserDetailsService userDetailsService;
+
+    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authManager, JwtConfig jwtConfig, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
         this.authManager = authManager;
         this.jwtConfig = jwtConfig;
-
+        this.passwordEncoder = passwordEncoder;
+        this.userDetailsService = userDetailsService;
         // By default, UsernamePasswordAuthenticationFilter listens to "/login" path.
         // In our case, we use "/auth". So, we need to override the defaults.
         this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(jwtConfig.getUri(), "POST"));
@@ -50,6 +61,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     creds.getUsername(), creds.getPassword(), Collections.emptyList());
             System.out.println("attempt");
+            System.out.println(userDetailsService.loadUserByUsername(creds.getUsername()).getPassword());
+            System.out.println(passwordEncoder.matches(creds.getPassword(), userDetailsService.loadUserByUsername(creds.getUsername()).getPassword()));
             // 3. Authentication manager authenticate the user, and use UserDetialsServiceImpl::loadUserByUsername() method to load the user.
             return authManager.authenticate(authToken);
 

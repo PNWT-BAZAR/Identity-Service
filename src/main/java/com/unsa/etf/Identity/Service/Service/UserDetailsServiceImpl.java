@@ -30,9 +30,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username);
         if(user.getUsername().equals(username)) {
             List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-                    .commaSeparatedStringToAuthorityList("ROLE_" + user.getRole().getName());
+                    .commaSeparatedStringToAuthorityList("ROLE_" + user.getRole());
 
-            return new org.springframework.security.core.userdetails.User(user.getUsername(), encoder.encode(user.getPasswordHash()), grantedAuthorities);
+            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPasswordHash(), grantedAuthorities);
         }
 
         throw new UsernameNotFoundException("Username: " + username + " not found");

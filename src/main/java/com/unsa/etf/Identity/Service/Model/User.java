@@ -57,12 +57,13 @@ public class User {
     @NotBlank
     private String shippingAddress;
 
-    @ManyToOne
-    @JoinColumn(name = "roleId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Role role;
+//    @ManyToOne
+//    @JoinColumn(name = "roleId")
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Role role;
+    private RoleEnum role;
 
-    public User(String firstName, String lastName, String username, String passwordHash, String email, String phoneNumber, String shippingAddress, Role role) {
+    public User(String firstName, String lastName, String username, String passwordHash, String email, String phoneNumber, String shippingAddress, RoleEnum role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;

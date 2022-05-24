@@ -1,26 +1,26 @@
 package com.unsa.etf.Identity.Service.Service;
 
 import com.unsa.etf.Identity.Service.Model.Role;
+import com.unsa.etf.Identity.Service.Model.RoleEnum;
 import com.unsa.etf.Identity.Service.Model.User;
 import com.unsa.etf.Identity.Service.Repository.UserRepository;
+import com.unsa.etf.Identity.Service.Requests.SignupRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final BCryptPasswordEncoder encoder;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-//        this.encoder = encoder;
-    }
+    private final BCryptPasswordEncoder encoder;
+//    private final PasswordEncoder passwordEncoder;
 
     public List<User> getUsers() {
         return userRepository.findAll();
@@ -88,5 +88,33 @@ public class UserService {
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public boolean existsByUsername(String username){
+        return userRepository.existsByUsernameIgnoreCase(username);
+    }
+
+    public boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
+
+    public User signup (SignupRequest signupRequest){
+        var newUser = User.builder().firstName(signupRequest.getFirstName())
+                .lastName(signupRequest.getLastName())
+                .username(signupRequest.getUsername())
+                .email(signupRequest.getEmail())
+                .passwordHash(encoder.encode(signupRequest.getPassword()))
+                .phoneNumber(signupRequest.getPhoneNumber())
+                .shippingAddress(signupRequest.getShippingAddress())
+                // TODO: 24.05.2022. provjeri koju rolu ovdje stavit
+                .role(RoleEnum.USER)
+                .build();
+
+        userRepository.save(newUser);
+        return newUser;
+    }
+
+    public String getPasswordHashForUsername(String username){
+        return userRepository.findByUsername(username).getPasswordHash();
     }
 }
