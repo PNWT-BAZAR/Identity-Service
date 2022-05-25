@@ -1,36 +1,30 @@
 package com.unsa.etf.Identity.Service.Security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unsa.etf.Identity.Service.Service.UserDetailsServiceImpl;
-import com.unsa.etf.Identity.Service.Service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.stereotype.Component;
-
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.PasswordAuthentication;
 import java.sql.Date;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authManager;
+    private final AuthenticationManager authManager;
 
     private final JwtConfig jwtConfig;
 
@@ -43,8 +37,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         this.jwtConfig = jwtConfig;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
-        // By default, UsernamePasswordAuthenticationFilter listens to "/login" path.
-        // In our case, we use "/auth". So, we need to override the defaults.
+
         this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(jwtConfig.getUri(), "POST"));
     }
 
@@ -54,16 +47,17 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
         try {
 
-            // 1. Get credentials from request
+            //Get credentials from request (temporary class)
             UserCredentials creds = new ObjectMapper().readValue(request.getInputStream(), UserCredentials.class);
 
-            // 2. Create auth object (contains credentials) which will be used by auth manager
+            //Create auth object (contains credentials) which will be used by auth manager
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     creds.getUsername(), creds.getPassword(), Collections.emptyList());
             System.out.println("attempt");
             System.out.println(userDetailsService.loadUserByUsername(creds.getUsername()).getPassword());
             System.out.println(passwordEncoder.matches(creds.getPassword(), userDetailsService.loadUserByUsername(creds.getUsername()).getPassword()));
-            // 3. Authentication manager authenticate the user, and use UserDetialsServiceImpl::loadUserByUsername() method to load the user.
+            //Authentication manager authenticate the user, and use UserDetialsServiceImpl::loadUserByUsername() method to load the user.
+            //This internally calls passwordEncoder.matcher(passwordFromRequest (this is generally non hashed pw that user types in), hashedPasswordFromDB)
             return authManager.authenticate(authToken);
 
         } catch (IOException e) {
@@ -96,7 +90,6 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     // A (temporary) class just to represent the user credentials
     private static class UserCredentials {
         private String username, password;
-        // getters and setters ...
 
         public String getUsername() {
             return username;

@@ -1,5 +1,6 @@
 package com.unsa.etf.Identity.Service.Requests;
 
+import com.unsa.etf.Identity.Service.Model.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,7 @@ public class SignupRequest {
     private String email;
     private String phoneNumber;
     private String shippingAddress;
+
+    // TODO: 25.05.2022. for now
+    private RoleEnum role;
 }

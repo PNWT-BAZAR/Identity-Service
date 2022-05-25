@@ -106,8 +106,8 @@ public class UserService {
                 .passwordHash(encoder.encode(signupRequest.getPassword()))
                 .phoneNumber(signupRequest.getPhoneNumber())
                 .shippingAddress(signupRequest.getShippingAddress())
-                // TODO: 24.05.2022. provjeri koju rolu ovdje stavit
-                .role(RoleEnum.USER)
+                // TODO: 24.05.2022. provjeri koju rolu ovdje stavit, dodati role u putanje, dodati rabbit na identitz servis
+                .role(signupRequest.getRole())
                 .build();
 
         userRepository.save(newUser);
