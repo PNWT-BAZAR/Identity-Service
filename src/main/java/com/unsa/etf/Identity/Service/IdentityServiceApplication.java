@@ -12,11 +12,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.util.Arrays;
 
 @EnableDiscoveryClient
 @SpringBootApplication
+@ComponentScan
 public class IdentityServiceApplication {
 
 	public static void main(String[] args) {
@@ -30,22 +32,22 @@ public class IdentityServiceApplication {
 
 		return args -> {
 
-			Role admin = new Role("Administrator");
-			Role shopper = new Role("Shopper");
-
-			roleRepository.saveAll(Arrays.asList(admin, shopper));
-
-			Permission permission1 = new Permission("Edit products");
-			Permission permission2 = new Permission("View products");
-			Permission permission3 = new Permission("Delete products");
-			Permission permission4 = new Permission("Add to cart");
-
-			permissionRepository.saveAll(Arrays.asList(permission1, permission2, permission3, permission4));
-
-			admin.setPermissions(Arrays.asList(permission1, permission2, permission3));
-			shopper.setPermissions(Arrays.asList(permission2, permission4));
-
-			roleRepository.saveAll(Arrays.asList(admin, shopper));
+//			Role admin = new Role("Administrator");
+//			Role shopper = new Role("Shopper");
+//
+//			roleRepository.saveAll(Arrays.asList(admin, shopper));
+//
+//			Permission permission1 = new Permission("Edit products");
+//			Permission permission2 = new Permission("View products");
+//			Permission permission3 = new Permission("Delete products");
+//			Permission permission4 = new Permission("Add to cart");
+//
+//			permissionRepository.saveAll(Arrays.asList(permission1, permission2, permission3, permission4));
+//
+//			admin.setPermissions(Arrays.asList(permission1, permission2, permission3));
+//			shopper.setPermissions(Arrays.asList(permission2, permission4));
+//
+//			roleRepository.saveAll(Arrays.asList(admin, shopper));
 
 			User faruk = new User(
 						"Faruk",

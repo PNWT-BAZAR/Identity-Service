@@ -1,6 +1,7 @@
 package com.unsa.etf.Identity.Service.Security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unsa.etf.Identity.Service.Security.jwtutil.JwtUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -85,6 +86,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
         // Add token to header
         response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
+        JwtUtil.JWT_TOKEN = jwtConfig.getPrefix() + token;
+        System.out.println(JwtUtil.JWT_TOKEN);
     }
 
     // A (temporary) class just to represent the user credentials

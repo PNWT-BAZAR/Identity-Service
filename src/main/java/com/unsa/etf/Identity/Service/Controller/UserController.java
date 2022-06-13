@@ -8,9 +8,12 @@ import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody.ErrorCode;
 import com.unsa.etf.Identity.Service.Responses.ObjectDeletionResponse;
 import com.unsa.etf.Identity.Service.Responses.ObjectListResponse;
 import com.unsa.etf.Identity.Service.Responses.ObjectResponse;
+import com.unsa.etf.Identity.Service.Security.jwtutil.JwtUtil;
 import com.unsa.etf.Identity.Service.Service.UserService;
 import com.unsa.etf.Identity.Service.Validator.BodyValidator;
 import com.unsa.etf.Identity.Service.Responses.BadRequestResponseBody;
+import com.unsa.etf.Identity.Service.rabbitmq.RabbitMessageSender;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +22,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final BodyValidator bodyValidator;
+    private final RabbitMessageSender rabbitMessageSender;
 
-    @Autowired
-    public UserController(UserService userService, BodyValidator bodyValidator) {
-        this.userService = userService;
-        this.bodyValidator = bodyValidator;
-    }
 
     @GetMapping
     public ObjectListResponse<User> getUsers() {
@@ -39,6 +39,16 @@ public class UserController {
     public ObjectResponse<User> getUserById(@PathVariable("userId") String userId){
         User user = userService.getUserById(userId);
         if (user == null) {
+            return new ObjectResponse<>(409,null,
+                    new BadRequestResponseBody(ErrorCode.NOT_FOUND, "User Does Not Exist!"));
+        }
+        return new ObjectResponse<>(200, user, null);
+    }
+
+    @GetMapping("/username")
+    public ObjectResponse<User> getUserByUsername(@RequestParam String username){
+        User user = userService.findByUsername(username);
+        if(user == null){
             return new ObjectResponse<>(409,null,
                     new BadRequestResponseBody(ErrorCode.NOT_FOUND, "User Does Not Exist!"));
         }
@@ -61,6 +71,7 @@ public class UserController {
     public ObjectResponse<User> createUser(@RequestBody User user) {
         if (bodyValidator.isValid(user)) {
             User user1 = userService.addNewUser(user);
+            rabbitMessageSender.notifyOrderServiceOfChange(user1, "add");
             if (user1 == null) {
                 return new ObjectResponse<>(409, null,
                         new BadRequestResponseBody(ErrorCode.ALREADY_EXISTS, "User Already Exists!"));
@@ -72,7 +83,9 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ObjectDeletionResponse deleteUser(@PathVariable("userId") String userId) {
+        var userToBeDeleted = userService.getUserById(userId);
         if(userService.deleteUserById(userId)){
+            rabbitMessageSender.notifyOrderServiceOfChange(userToBeDeleted, "delete");
             return new ObjectDeletionResponse(200, "User Successfully Deleted!", null);
         }
         return new ObjectDeletionResponse(409, "Error has occurred!",
@@ -89,14 +102,16 @@ public class UserController {
     public ObjectResponse<User> updateUser(@RequestBody User user) {
         if (bodyValidator.isValid(user)) {
             User updatedUser = userService.updateUser(user);
+            rabbitMessageSender.notifyOrderServiceOfChange(updatedUser, "update");
             return new ObjectResponse<>(200, updatedUser, null);
         }
         return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(user));
     }
 
     @PostMapping("/login")
-    public void login (@RequestBody LoginRequest user) {
+    public ObjectResponse<String> login (@RequestBody LoginRequest user) {
         System.out.println("/login");
+        return new ObjectResponse<>(200, JwtUtil.JWT_TOKEN, null);
     }
 
     @PostMapping("/signup")
@@ -110,6 +125,7 @@ public class UserController {
                 return new ObjectResponse<>(409, null, new BadRequestResponseBody(ErrorCode.ALREADY_EXISTS, "Email is already taken!"));
             }
             var createdUser = userService.signup(signupRequest);
+            rabbitMessageSender.notifyOrderServiceOfChange(createdUser, "add");
             return new ObjectResponse<>(200, createdUser, null);
         }
         return new ObjectResponse<>(409, null, bodyValidator.determineConstraintViolation(userTmp));
